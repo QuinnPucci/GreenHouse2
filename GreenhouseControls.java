@@ -1,20 +1,18 @@
 import java.io.*;
-import java.util.Calendar;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GreenhouseControls extends Controller {
-    private boolean light = false;
-    private boolean water = false;
-    private String thermostat = "Day";
+
     private String eventsFile = "examples1.txt";
 
    // PART 1 STEP 3 -> thread collection and suspend state
     private List<Thread> eventThreads = new ArrayList<Thread>();
     private boolean suspended = false;
 
-
+    // PART 1 STEP 4
+    private List<TwoTuple<String, Object>> stateVariables =
+            new ArrayList<TwoTuple<String, Object>>();
 
     public static void printUsage() {
         System.out.println("Correct format: ");
@@ -122,6 +120,50 @@ PART 1 STEP 3 METHODS
     }
 /*-----------------------------------------------------
 PART 1 STEP 3 METHODS END
+----------------------------------------------------- */
+
+/*-----------------------------------------------------
+PART 1 STEP 4 METHODS
+----------------------------------------------------- */
+
+ // synchronized state update
+    public synchronized void setVariable(String key, Object value) {
+        // search for existing variable
+        for (int i = 0; i < stateVariables.size(); i++) {
+            TwoTuple<String, Object> variable = stateVariables.get(i);
+
+            if (variable.first.equals(key)) {
+                // replace existing variable
+                stateVariables.set(i, new TwoTuple<String, Object>(key, value));
+                return;
+            }
+        }
+
+        // add new variable
+        stateVariables.add(new TwoTuple<String, Object>(key, value));
+    }
+
+ // get one state variable
+    public synchronized Object getVariable(String key) {
+        // search for variable
+        for (TwoTuple<String, Object> variable : stateVariables) {
+            if (variable.first.equals(key)) {
+                return variable.second;
+            }
+        }
+
+        // variable not found
+        return null;
+    }
+
+    // get all state variables
+    public synchronized List<TwoTuple<String, Object>> getStateVariables() {
+        // return copy of variables
+        return new ArrayList<TwoTuple<String, Object>>(stateVariables);
+    }
+
+/*-----------------------------------------------------
+  PART 1 STEP 4 METHODS END
 ----------------------------------------------------- */
 
     //---------------------------------------------------------

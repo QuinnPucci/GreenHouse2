@@ -13,7 +13,6 @@ public class Restart extends Event {
     public Restart(long delayTime, String filename, GreenhouseControls greenhouse) {
         super(delayTime);
         this.filename = filename;
-        this.greenhouse = greenhouse;
     }
 
     @Override
