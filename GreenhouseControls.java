@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.Calendar;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GreenhouseControls extends Controller {
     private boolean light = false;
@@ -8,96 +10,10 @@ public class GreenhouseControls extends Controller {
     private String thermostat = "Day";
     private String eventsFile = "examples1.txt";
 
-    public class LightOff extends Event {
-        public LightOff(long delayTime) { super(delayTime); }
-        public void action() {
-            // Put hardware control code here to
-            // physically turn off the light.
-            light = false;
-        }
-        public String toString() { return "Light is off"; }
-    }
-    public class WaterOn extends Event {
-        public WaterOn(long delayTime) { super(delayTime); }
-        public void action() {
-            // Put hardware control code here.
-            water = true;
-        }
-        public String toString() {
-            return "Greenhouse water is on";
-        }
-    }
-    public class WaterOff extends Event {
-        public WaterOff(long delayTime) { super(delayTime); }
-        public void action() {
-            // Put hardware control code here.
-            water = false;
-        }
-        public String toString() {
-            return "Greenhouse water is off";
-        }
-    }
-    public class ThermostatNight extends Event {
-        public ThermostatNight(long delayTime) {
-            super(delayTime);
-        }
-        public void action() {
-            // Put hardware control code here.
-            thermostat = "Night";
-        }
-        public String toString() {
-            return "Thermostat on night setting";
-        }
-    }
-    public class ThermostatDay extends Event {
-        public ThermostatDay(long delayTime) {
-            super(delayTime);
-        }
-        public void action() {
-            // Put hardware control code here.
-            thermostat = "Day";
-        }
-        public String toString() {
-            return "Thermostat on day setting";
-        }
-    }
-    // An example of an action() that inserts a
-    // new one of itself into the event list:
-    public class Bell extends Event {
-        public Bell(long delayTime) { super(delayTime); }
-        public void action() {
-            // nothing to do
-        }
-        public String toString() { return "Bing!"; }
-    }
+   // PART 1 STEP 3 -> thread collection and suspend state
+    private List<Thread> eventThreads = new ArrayList<Thread>();
+    private boolean suspended = false;
 
-    public class Restart extends Event {
-        public Restart(long delayTime, String filename) {
-            super(delayTime);
-            eventsFile = filename;
-        }
-
-        public void action() {
-            addEvent(new ThermostatNight(0));
-            addEvent(new LightOn(2000));
-            addEvent(new WaterOff(8000));
-            addEvent(new ThermostatDay(10000));
-            addEvent(new Bell(9000));
-            addEvent(new WaterOn(6000));
-            addEvent(new LightOff(4000));
-            addEvent(new Terminate(12000));
-        }
-
-        public String toString() {
-            return "Restarting system";
-        }
-    }
-
-    public class Terminate extends Event {
-        public Terminate(long delayTime) { super(delayTime); }
-        public void action() { System.exit(0); }
-        public String toString() { return "Terminating";  }
-    }
 
 
     public static void printUsage() {
@@ -106,9 +22,8 @@ public class GreenhouseControls extends Controller {
         System.out.println("  java GreenhouseControls -d dump.out");
     }
 
-
 /*-----------------------------------------------------
- part 1 step 2 create events by class name
+ part 1 step 2 create events
 ----------------------------------------------------- */
 
     public void createEvent(String className, long delayTime) {
@@ -135,7 +50,7 @@ public class GreenhouseControls extends Controller {
 // --------------------------------------------------------------
 
 /*-----------------------------------------------------
- part 1 step 2 create restart by class name
+ part 1 step 2 create restart
 ----------------------------------------------------- */
 
     public void createEvent(String className, long delayTime, String filename) {
@@ -161,6 +76,54 @@ public class GreenhouseControls extends Controller {
     }
 // --------------------------------------------------------------
 
+/*-----------------------------------------------------
+PART 1 STEP 3 METHODS
+----------------------------------------------------- */
+    // start and store event threads
+    @Override
+    public void addEvent(Event event) {
+        // create thread using event
+        Thread thread = new Thread(event);
+
+        // store thread
+        eventThreads.add(thread);
+
+        // start thread and call run
+        thread.start();
+    }
+
+    // suspend event threads
+    public synchronized void suspendEvents() {
+        // set suspended state
+        suspended = true;
+    }
+
+ // part 1 step 3 resume event threads
+    public synchronized void resumeEvents() {
+        // clear suspended state
+        suspended = false;
+
+        // wake waiting threads
+        notifyAll();
+    }
+
+ // event wait check
+    public synchronized void waitIfSuspended() throws InterruptedException {
+        // wait while suspended
+        while (suspended) {
+            wait();
+        }
+    }
+
+ // access event threads
+    public List<Thread> getEventThreads() {
+        // return event threads
+        return eventThreads;
+    }
+/*-----------------------------------------------------
+PART 1 STEP 3 METHODS END
+----------------------------------------------------- */
+
     //---------------------------------------------------------
     public static void main(String[] args) {
         try {
@@ -178,8 +141,7 @@ public class GreenhouseControls extends Controller {
                 // replace add event with create event
                 gc.createEvent("Restart", 0, filename);
             }
-
-            gc.run();
+            // remove gc.run()
         }
         catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Invalid number of parameters");

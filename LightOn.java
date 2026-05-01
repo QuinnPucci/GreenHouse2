@@ -9,7 +9,6 @@ public class LightOn extends Event {
     public LightOn(long delayTime, GreenhouseControls greenhouse) {
         super(delayTime);
         // event can update greenhouse state
-        this.greenhouse = greenhouse;
     }
 
     @Override
