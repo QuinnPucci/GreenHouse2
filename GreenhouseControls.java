@@ -1,18 +1,78 @@
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.io.Serializable;
 
-public class GreenhouseControls extends Controller {
+public class GreenhouseControls extends Controller implements Serializable {
 
     private String eventsFile = "examples1.txt";
 
    // PART 1 STEP 3 -> thread collection and suspend state
-    private List<Thread> eventThreads = new ArrayList<Thread>();
+   // part 1 step 3 thread collection and suspend state
+    private transient List<Thread> eventThreads = new ArrayList<Thread>();
     private boolean suspended = false;
 
     // PART 1 STEP 4
     private List<TwoTuple<String, Object>> stateVariables =
             new ArrayList<TwoTuple<String, Object>>();
+    // PART 2 - gui output target
+    private transient GreenhouseOutput output;
+
+/* -----------------------------------------------
+   PART 2 METHODS
+ ----------------------------------------------*/
+    // set gui output target
+    public void setOutput(GreenhouseOutput output) {
+        this.output = output;
+    }
+
+    // output event description
+    public synchronized void outputEvent(long time, String description) {
+        // format output for console and gui
+        String message =
+                "[" + Thread.currentThread().getName() + "]" +
+                        "[" + time + "] " +
+                        description;
+
+        // send output to gui if available
+        if (output != null) {
+            output.output(message);
+        } else {
+            System.out.println(message);
+        }
+    }
+
+    // check if any event thread is running
+    public synchronized boolean isRunning() {
+        // call helper method
+        setupTransientFields();
+        // check event threads
+        for (Thread thread : eventThreads) {
+            if (thread.isAlive()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    // check if events are suspended
+    public synchronized boolean isSuspended() {
+        return suspended;
+    }
+
+    // setup transient fields after restore
+    private void setupTransientFields() {
+        if (eventThreads == null) {
+            eventThreads = new ArrayList<Thread>();
+        }
+    }
+
+/*-----------------------------------------------
+   PART 2 METHODS END
+----------------------------------------------*/
+
 
     public static void printUsage() {
         System.out.println("Correct format: ");
@@ -80,6 +140,9 @@ PART 1 STEP 3 METHODS
     // start and store event threads
     @Override
     public void addEvent(Event event) {
+        // call helper method
+        setupTransientFields();
+
         // create thread using event
         Thread thread = new Thread(event);
 

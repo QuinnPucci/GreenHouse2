@@ -1,8 +1,12 @@
+import java.io.Serializable;
+
 /*-----------------------------------------------------
- Part 1 Step 4 twotuple class
+ PART 1 STEP 4 twotuple class
 ----------------------------------------------------- */
 
-public class TwoTuple<A, B> {
+public class TwoTuple<A, B> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public final A first;
     public final B second;
 

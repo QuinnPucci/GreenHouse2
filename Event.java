@@ -1,6 +1,7 @@
 /* --------------------------------------------------
  PART 1: STEP 1 MODIFY EVENT TO WORK WITH THREADS.
  step 3: supports suyspend and resume
+ step 5: final output through ghc
 ----------------------------------------------------- */
 
 public abstract class Event implements Runnable {
@@ -36,22 +37,15 @@ public abstract class Event implements Runnable {
             // check suspend one more time before action
             greenhouse.waitIfSuspended();
 
-            // formatted output thread name time description
-            System.out.println(
-                    "[" + Thread.currentThread().getName() + "]" +
-                            "[" + delayTime + "] " +
-                            this
-            );
+            // output event description
+            greenhouse.outputEvent(delayTime, this.toString());
 
             // event ready then action
             action();
 
         } catch (InterruptedException e) {
-            // handles interrupted thread
-            System.out.println(
-                    "[" + Thread.currentThread().getName() + "]" +
-                            "[" + delayTime + "] Event interrupted: " + this
-            );
+            // output interrupted event
+            greenhouse.outputEvent(delayTime, "event interrupted " + this);
         }
     }
 
