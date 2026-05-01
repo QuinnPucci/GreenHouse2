@@ -1,9 +1,8 @@
 
 public class LightOff extends Event {
-    private GreenhouseControls greenhouse;
 
     public LightOff(long delayTime, GreenhouseControls greenhouse) {
-        super(delayTime);
+        super(delayTime, greenhouse);
     }
 
     @Override

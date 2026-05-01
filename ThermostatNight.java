@@ -3,10 +3,9 @@
 ----------------------------------------------------- */
 
 public class ThermostatNight extends Event {
-    private GreenhouseControls greenhouse;
 
     public ThermostatNight(long delayTime, GreenhouseControls greenhouse) {
-        super(delayTime);
+        super(delayTime, greenhouse);
     }
 
     @Override

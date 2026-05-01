@@ -2,10 +2,9 @@
 ----------------------------------------------------- */
 
 public class Terminate extends Event {
-    private GreenhouseControls greenhouse;
 
     public Terminate(long delayTime, GreenhouseControls greenhouse) {
-        super(delayTime);
+        super(delayTime, greenhouse);
     }
 
     @Override

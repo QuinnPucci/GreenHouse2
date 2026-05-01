@@ -2,12 +2,10 @@
 
 // convert events to there own file
 public class LightOn extends Event {
-   // ref ghc object
-    private GreenhouseControls greenhouse;
 
     // constructor takes delay time and greenhouse
     public LightOn(long delayTime, GreenhouseControls greenhouse) {
-        super(delayTime);
+        super(delayTime, greenhouse);
         // event can update greenhouse state
     }
 

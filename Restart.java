@@ -7,11 +7,10 @@ import java.util.Scanner;
 ----------------------------------------------------- */
 
 public class Restart extends Event {
-    private GreenhouseControls greenhouse;
     private String filename;
 
     public Restart(long delayTime, String filename, GreenhouseControls greenhouse) {
-        super(delayTime);
+        super(delayTime, greenhouse);
         this.filename = filename;
     }
 

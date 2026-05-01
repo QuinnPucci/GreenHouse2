@@ -3,10 +3,9 @@
 ----------------------------------------------------- */
 
 public class WaterOn extends Event {
-    private GreenhouseControls greenhouse;
 
     public WaterOn(long delayTime, GreenhouseControls greenhouse) {
-        super(delayTime);
+        super(delayTime, greenhouse);
     }
 
     @Override
