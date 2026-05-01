@@ -1,17 +1,48 @@
-import java.io.*;
+/* --------------------------------------------------
+ PART 1: STEP 1 MODIFY EVENT TO WORK WITH THREADS
+----------------------------------------------------- */
 
-public abstract class Event {
-    private long eventTime;
+public abstract class Event implements Runnable {
+    // delayTime stays but used inside run
     protected final long delayTime;
+
     public Event(long delayTime) {
         this.delayTime = delayTime;
-        start();
+        // Thread sleep handles the delay
     }
-    public void start() { // Allows restarting
-        eventTime = System.currentTimeMillis() + delayTime;
+
+    // overidden run method
+    @Override
+    public void run() {
+        try {
+            // each event handles its own timing now
+            // pauses for delayTime ms
+            Thread.sleep(delayTime);
+
+            // formated output [thread-name][time]
+            System.out.println(
+                    "[" + Thread.currentThread().getName() + "]" +
+                            "[" + delayTime + "] " +
+                            this
+            );
+
+
+            // event ready -> action
+            action();
+
+        } catch (InterruptedException e) {
+            // Thread.sleep() InterruptedException throw
+            System.out.println(
+                    "[" + Thread.currentThread().getName() + "]" +
+                            "[" + delayTime + "] Event interrupted: " + this
+            );
+        }
     }
-    public boolean ready() {
-        return System.currentTimeMillis() >= eventTime;
-    }
+
     public abstract void action();
-} ///:~
+
+    // helper method to check delayTime
+    public long getDelayTime() {
+        return delayTime;
+    }
+}

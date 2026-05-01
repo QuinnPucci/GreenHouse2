@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.Calendar;
+import java.lang.reflect.Constructor;
 
 public class GreenhouseControls extends Controller {
     private boolean light = false;
@@ -7,16 +8,6 @@ public class GreenhouseControls extends Controller {
     private String thermostat = "Day";
     private String eventsFile = "examples1.txt";
 
-
-    public class LightOn extends Event {
-        public LightOn(long delayTime) { super(delayTime); }
-        public void action() {
-            // Put hardware control code here to
-            // physically turn on the light.
-            light = true;
-        }
-        public String toString() { return "Light is on"; }
-    }
     public class LightOff extends Event {
         public LightOff(long delayTime) { super(delayTime); }
         public void action() {
@@ -115,6 +106,61 @@ public class GreenhouseControls extends Controller {
         System.out.println("  java GreenhouseControls -d dump.out");
     }
 
+
+/*-----------------------------------------------------
+ part 1 step 2 create events by class name
+----------------------------------------------------- */
+
+    public void createEvent(String className, long delayTime) {
+        try {
+            // find class by name
+            Class<?> eventClass = Class.forName(className);
+
+            // find constructor with delaytime and greenhousecontrols
+            Constructor<?> constructor =
+                    eventClass.getConstructor(long.class, GreenhouseControls.class);
+
+            // create event object
+            Event event =
+                    (Event) constructor.newInstance(delayTime, this);
+
+            // start event thread
+            addEvent(event);
+
+        } catch (Exception e) {
+            System.out.println("could not create event " + className);
+            e.printStackTrace();
+        }
+    }
+// --------------------------------------------------------------
+
+/*-----------------------------------------------------
+ part 1 step 2 create restart by class name
+----------------------------------------------------- */
+
+    public void createEvent(String className, long delayTime, String filename) {
+        try {
+            // find class by name
+            Class<?> eventClass = Class.forName(className);
+
+            // find constructor with delaytime filename and greenhousecontrols
+            Constructor<?> constructor =
+                    eventClass.getConstructor(long.class, String.class, GreenhouseControls.class);
+
+            // create event object
+            Event event =
+                    (Event) constructor.newInstance(delayTime, filename, this);
+
+            // start event thread
+            addEvent(event);
+
+        } catch (Exception e) {
+            System.out.println("could not create event " + className);
+            e.printStackTrace();
+        }
+    }
+// --------------------------------------------------------------
+
     //---------------------------------------------------------
     public static void main(String[] args) {
         try {
@@ -129,7 +175,8 @@ public class GreenhouseControls extends Controller {
             GreenhouseControls gc = new GreenhouseControls();
 
             if (option.equals("-f"))  {
-                gc.addEvent(gc.new Restart(0,filename));
+                // replace add event with create event
+                gc.createEvent("Restart", 0, filename);
             }
 
             gc.run();
