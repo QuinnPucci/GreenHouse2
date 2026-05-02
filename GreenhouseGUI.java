@@ -1,15 +1,13 @@
 /*
-To try and get the 5% bonus for a pleasing GUI I leaned on flatlaf alot.
-I used FlatLaf to modernize the look of the Swing components.
+To earn the 5% bonus for a pleasing GUI I used the external library FlatLaf.
+FlatLaf modernizes the look of Swing components.
 The GUI still uses normal Swing components such as
 JFrame, JButton, JMenuBar, JTextArea, JScrollPane,
 JPopupMenu, JFileChooser, and JOptionPane,
 but FlatLaf improves the visual rendering adding a "modern" feel.
 My project zip also includes a reference doc, but here is the flatlaf refs
-
 JFormDesigner. (n.d.). *FlatLaf: Flat look and feel* [Source code]. GitHub. https://github.com/JFormDesigner/FlatLaf
 FormDev Software GmbH. (n.d.). FlatLaf: Flat look and feel. https://www.formdev.com/flatlaf/
-
  */
 
 import javax.swing.*;
