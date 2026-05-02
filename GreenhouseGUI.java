@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
 PART 2 - GUI
 ----------------------------------------------------- */
 
+/**
+ * provides the graphical interface for controlling a GreenhouseControls object
+ */
 public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     private static final List<GreenhouseGUI> windows = new ArrayList<GreenhouseGUI>();
 
@@ -51,6 +54,11 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     private JMenuItem popupSuspendItem;
     private JMenuItem popupResumeItem;
 
+    /**
+     * creates a new gui window associated with a GreenhouseControls object
+     *
+     * @param greenhouse the greenhouse controller object for this window
+     */
     public GreenhouseGUI(GreenhouseControls greenhouse) {
         this.greenhouse = greenhouse;
         this.greenhouse.setOutput(this);
@@ -70,6 +78,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // setup main window
+
+    /**
+     * sets up the main window properties
+     */
     private void setupWindow() {
         setTitle("Greenhouse Controls");
         setSize(800, 520);
@@ -78,6 +90,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // setup pulldown menu
+
+    /**
+     * creates the pulldown menu and keyboard shortcuts
+     */
     private void setupMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("file");
@@ -142,6 +158,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // setup window layout
+
+    /**
+     * creates the main gui layout and control buttons
+     */
     private void setupLayout() {
         JPanel rootPanel = new JPanel(new BorderLayout(12, 12));
         rootPanel.setBorder(new EmptyBorder(14, 14, 14, 14));
@@ -224,6 +244,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // setup popup menu
+
+    /**
+     * creates the popup menu with the same commands as the buttons
+     */
     private void setupPopupMenu() {
         JPopupMenu popupMenu = new JPopupMenu();
 
@@ -280,6 +304,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // setup close behavior
+
+    /**
+     * sets up the close window behavior
+     */
     private void setupWindowClosing() {
         addWindowListener(new WindowAdapter() {
             @Override
@@ -290,6 +318,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // setup gui update timer
+
+    /**
+     * creates a timer that refreshes button and status states
+     */
     private void setupTimer() {
         Timer timer = new Timer(500, new ActionListener() {
             @Override
@@ -302,6 +334,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // start greenhouse
+
+    /**
+     * starts the greenhouse using the currently opened events file
+     */
     private void startGreenhouse() {
         if (currentEventsFile == null) {
             showError("open an events file first");
@@ -314,6 +350,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // restart greenhouse
+
+    /**
+     * restarts the greenhouse using the current events file
+     */
     private void restartGreenhouse() {
         if (currentEventsFile == null) {
             showError("open an events file first");
@@ -327,6 +367,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // terminate greenhouse
+
+    /**
+     * prompts for a delay time and adds a terminate event
+     */
     private void terminateGreenhouse() {
         String input = JOptionPane.showInputDialog(
                 this,
@@ -349,6 +393,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // open events file
+
+    /**
+     * opens and validates an events file chosen by the user
+     */
     private void openEventsFile() {
         JFileChooser fileChooser = new JFileChooser();
 
@@ -370,6 +418,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // restore greenhouse object
+
+    /**
+     * restores a GreenhouseControls object from a dump file
+     */
     private void restoreGreenhouse() {
         JFileChooser fileChooser = new JFileChooser();
 
@@ -402,6 +454,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // close current window
+
+    /**
+     * closes the current window after checking for running events
+     */
     private void closeWindow() {
         if (greenhouse.isRunning()) {
             int choice = JOptionPane.showConfirmDialog(
@@ -425,6 +481,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // exit application
+
+    /**
+     * exits the application after checking all open windows for running events
+     */
     private void exitApplication() {
         for (GreenhouseGUI window : windows) {
             if (window.greenhouse.isRunning()) {
@@ -447,6 +507,13 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // check events file format
+
+    /**
+     * checks whether a file uses the expected events file format
+     *
+     * @param file the events file to check
+     * @return true if the events file is valid otherwise false
+     */
     private boolean isValidEventsFile(File file) {
         Pattern pattern = Pattern.compile("Event=\\w+,time=\\d+");
 
@@ -472,6 +539,10 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // update enabled controls
+
+    /**
+     * updates button menu and status states based on the greenhouse state
+     */
     private void updateControls() {
         boolean running = greenhouse.isRunning();
         boolean suspended = greenhouse.isSuspended();
@@ -501,6 +572,12 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // show error dialog
+
+    /**
+     * displays an error message dialog
+     *
+     * @param message the error message to display
+     */
     private void showError(String message) {
         JOptionPane.showMessageDialog(
                 this,
@@ -511,6 +588,12 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
     }
 
     // output to text area
+
+    /**
+     * appends output text to the scrollable text area
+     *
+     * @param text the text to display
+     */
     @Override
     public void output(String text) {
         SwingUtilities.invokeLater(new Runnable() {

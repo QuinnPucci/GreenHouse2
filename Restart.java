@@ -6,14 +6,27 @@ import java.util.Scanner;
  part 1 step 2 restart event
 ----------------------------------------------------- */
 
+/**
+ * represents a restart event that reads an events file and creates event objects
+ */
 public class Restart extends Event {
     private String filename;
 
+    /**
+     * creates a restart event with a delay time and events filename
+     *
+     * @param delayTime the event delay time in milliseconds
+     * @param filename the events file to read
+     * @param greenhouse the greenhouse controller used by the event
+     */
     public Restart(long delayTime, String filename, GreenhouseControls greenhouse) {
         super(delayTime, greenhouse);
         this.filename = filename;
     }
 
+    /**
+     * reads the events file and creates each listed event by class name
+     */
     @Override
     public void action() {
         try {
@@ -46,6 +59,11 @@ public class Restart extends Event {
         }
     }
 
+    /**
+     * returns the restart event description
+     *
+     * @return the restart event description
+     */
     @Override
     public String toString() {
         return "Restarting system";

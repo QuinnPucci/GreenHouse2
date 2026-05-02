@@ -15,7 +15,16 @@ import javax.swing.UIManager;
 PART 2 GUI APP
 ----------------------------------------------------- */
 
+/**
+ * starts the greenhouse graphical application
+ */
 public class GreenhouseApp {
+
+    /**
+     * sets the look and feel and opens the greenhouse gui
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         // setup flatlaf before gui starts
         FlatLightLaf.setup();

@@ -4,6 +4,9 @@
  step 5: final output through ghc
 ----------------------------------------------------- */
 
+/**
+ * represents a greenhouse event that runs as a separate thread
+ */
 public abstract class Event implements Runnable {
     // delaytime is used inside run now
     protected final long delayTime;
@@ -11,12 +14,22 @@ public abstract class Event implements Runnable {
     // reference to greenhousecontrols
     protected final GreenhouseControls greenhouse;
 
+    /**
+     * creates an event with a delay time and greenhouse controller reference
+     *
+     * @param delayTime the event delay time in milliseconds
+     * @param greenhouse the greenhouse controller used by the event
+     */
     public Event(long delayTime, GreenhouseControls greenhouse) {
         this.delayTime = delayTime;
         this.greenhouse = greenhouse;
     }
 
     // overridden run method
+
+    /**
+     * runs the event by waiting for its delay time then outputting and performing its action
+     */
     @Override
     public void run() {
         try {
@@ -56,9 +69,18 @@ public abstract class Event implements Runnable {
         }
     }
 
+    /**
+     * performs the event specific action
+     */
     public abstract void action();
 
     // returns delaytime
+
+    /**
+     * returns the event delay time
+     *
+     * @return the event delay time in milliseconds
+     */
     public long getDelayTime() {
         return delayTime;
     }

@@ -3,12 +3,15 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 import java.io.Serializable;
 
+/**
+ * controls greenhouse event creation thread control state variables and gui output
+ */
 public class GreenhouseControls extends Controller implements Serializable {
 
     private String eventsFile = "examples1.txt";
 
-   // PART 1 STEP 3 -> thread collection and suspend state
-   // part 1 step 3 thread collection and suspend state
+    // PART 1 STEP 3 -> thread collection and suspend state
+    // part 1 step 3 thread collection and suspend state
     private transient List<Thread> eventThreads = new ArrayList<Thread>();
     private boolean suspended = false;
 
@@ -25,11 +28,24 @@ public class GreenhouseControls extends Controller implements Serializable {
    PART 2 METHODS
  ----------------------------------------------*/
     // set gui output target
+
+    /**
+     * sets the output target used by the graphical interface
+     *
+     * @param output the gui output target
+     */
     public void setOutput(GreenhouseOutput output) {
         this.output = output;
     }
 
     // output event description
+
+    /**
+     * formats an event message and sends it to the gui or console
+     *
+     * @param time the event delay time in milliseconds
+     * @param description the event description
+     */
     public synchronized void outputEvent(long time, String description) {
         // format output for console and gui
         String message =
@@ -46,6 +62,12 @@ public class GreenhouseControls extends Controller implements Serializable {
     }
 
     // check if any event thread is running
+
+    /**
+     * checks whether any event thread is currently running
+     *
+     * @return true if at least one event thread is alive otherwise false
+     */
     public synchronized boolean isRunning() {
         // call helper method
         setupTransientFields();
@@ -61,11 +83,21 @@ public class GreenhouseControls extends Controller implements Serializable {
 
 
     // check if events are suspended
+
+    /**
+     * checks whether event threads are currently suspended
+     *
+     * @return true if events are suspended otherwise false
+     */
     public synchronized boolean isSuspended() {
         return suspended;
     }
 
     // setup transient fields after restore
+
+    /**
+     * restores transient fields after deserialization
+     */
     private void setupTransientFields() {
         if (eventThreads == null) {
             eventThreads = new ArrayList<Thread>();
@@ -75,6 +107,10 @@ public class GreenhouseControls extends Controller implements Serializable {
     // but modifying terminate to stop the current events not close the window
 
     // terminate event threads
+
+    /**
+     * terminates the current running greenhouse events
+     */
     public synchronized void terminateEvents() {
         // set terminated state
         terminated = true;
@@ -88,11 +124,21 @@ public class GreenhouseControls extends Controller implements Serializable {
     }
 
     // check if greenhouse is terminated
+
+    /**
+     * checks whether the greenhouse has been terminated
+     *
+     * @return true if the greenhouse has been terminated otherwise false
+     */
     public synchronized boolean isTerminated() {
         return terminated;
     }
 
     // clear terminated state
+
+    /**
+     * clears the terminated state before starting or restarting events
+     */
     public synchronized void clearTerminated() {
         terminated = false;
     }
@@ -102,6 +148,9 @@ public class GreenhouseControls extends Controller implements Serializable {
 ----------------------------------------------*/
 
 
+    /**
+     * prints the command line usage instructions
+     */
     public static void printUsage() {
         System.out.println("Correct format: ");
         System.out.println("  java GreenhouseControls -f <filename>, or");
@@ -112,6 +161,12 @@ public class GreenhouseControls extends Controller implements Serializable {
  part 1 step 2 create events
 ----------------------------------------------------- */
 
+    /**
+     * creates an event object from a class name and starts it as a thread
+     *
+     * @param className the name of the event class
+     * @param delayTime the event delay time in milliseconds
+     */
     public void createEvent(String className, long delayTime) {
         try {
             // find class by name
@@ -139,6 +194,13 @@ public class GreenhouseControls extends Controller implements Serializable {
  part 1 step 2 create restart
 ----------------------------------------------------- */
 
+    /**
+     * creates a restart event object from a class name filename and delay time
+     *
+     * @param className the name of the event class
+     * @param delayTime the event delay time in milliseconds
+     * @param filename the events file name
+     */
     public void createEvent(String className, long delayTime, String filename) {
         try {
             // find class by name
@@ -166,6 +228,12 @@ public class GreenhouseControls extends Controller implements Serializable {
 PART 1 STEP 3 METHODS
 ----------------------------------------------------- */
     // start and store event threads
+
+    /**
+     * starts an event as a thread and stores the thread
+     *
+     * @param event the event to start
+     */
     @Override
     public void addEvent(Event event) {
         // call helper method
@@ -182,12 +250,20 @@ PART 1 STEP 3 METHODS
     }
 
     // suspend event threads
+
+    /**
+     * suspends all event threads
+     */
     public synchronized void suspendEvents() {
         // set suspended state
         suspended = true;
     }
 
- // part 1 step 3 resume event threads
+    // part 1 step 3 resume event threads
+
+    /**
+     * resumes all suspended event threads
+     */
     public synchronized void resumeEvents() {
         // clear suspended state
         suspended = false;
@@ -196,7 +272,13 @@ PART 1 STEP 3 METHODS
         notifyAll();
     }
 
- // event wait check
+    // event wait check
+
+    /**
+     * pauses an event thread while the greenhouse is suspended
+     *
+     * @throws InterruptedException if the waiting thread is interrupted
+     */
     public synchronized void waitIfSuspended() throws InterruptedException {
         // wait while suspended
         while (suspended) {
@@ -204,7 +286,13 @@ PART 1 STEP 3 METHODS
         }
     }
 
- // access event threads
+    // access event threads
+
+    /**
+     * returns the collection of event threads
+     *
+     * @return the list of event threads
+     */
     public List<Thread> getEventThreads() {
         // return event threads
         return eventThreads;
@@ -217,7 +305,14 @@ PART 1 STEP 3 METHODS END
 PART 1 STEP 4 METHODS
 ----------------------------------------------------- */
 
- // synchronized state update
+    // synchronized state update
+
+    /**
+     * updates a greenhouse state variable in the state collection
+     *
+     * @param key the name of the state variable
+     * @param value the value to store
+     */
     public synchronized void setVariable(String key, Object value) {
         // search for existing variable
         for (int i = 0; i < stateVariables.size(); i++) {
@@ -234,7 +329,14 @@ PART 1 STEP 4 METHODS
         stateVariables.add(new TwoTuple<String, Object>(key, value));
     }
 
- // get one state variable
+    // get one state variable
+
+    /**
+     * returns one greenhouse state variable
+     *
+     * @param key the name of the state variable
+     * @return the stored value or null if the variable is not found
+     */
     public synchronized Object getVariable(String key) {
         // search for variable
         for (TwoTuple<String, Object> variable : stateVariables) {
@@ -248,6 +350,12 @@ PART 1 STEP 4 METHODS
     }
 
     // get all state variables
+
+    /**
+     * returns a copy of all greenhouse state variables
+     *
+     * @return a copy of the state variable collection
+     */
     public synchronized List<TwoTuple<String, Object>> getStateVariables() {
         // return copy of variables
         return new ArrayList<TwoTuple<String, Object>>(stateVariables);
@@ -258,6 +366,12 @@ PART 1 STEP 4 METHODS
 ----------------------------------------------------- */
 
     //---------------------------------------------------------
+
+    /**
+     * starts the greenhouse controls program from the command line
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         try {
             String option = args[0];
