@@ -17,6 +17,9 @@ public class GreenhouseControls extends Controller implements Serializable {
             new ArrayList<TwoTuple<String, Object>>();
     // PART 2 - gui output target
     private transient GreenhouseOutput output;
+    // part 2 terminate state
+    // this is so terminate stops the events, not ends the program
+    private boolean terminated = false;
 
 /* -----------------------------------------------
    PART 2 METHODS
@@ -67,6 +70,31 @@ public class GreenhouseControls extends Controller implements Serializable {
         if (eventThreads == null) {
             eventThreads = new ArrayList<Thread>();
         }
+    }
+    // Below are helper methods for keeping the program running
+    // but modifying terminate to stop the current events not close the window
+
+    // terminate event threads
+    public synchronized void terminateEvents() {
+        // set terminated state
+        terminated = true;
+
+        // interrupt all event threads
+        for (Thread thread : eventThreads) {
+            if (thread != Thread.currentThread()) {
+                thread.interrupt();
+            }
+        }
+    }
+
+    // check if greenhouse is terminated
+    public synchronized boolean isTerminated() {
+        return terminated;
+    }
+
+    // clear terminated state
+    public synchronized void clearTerminated() {
+        terminated = false;
     }
 
 /*-----------------------------------------------

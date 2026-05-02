@@ -25,6 +25,10 @@ public abstract class Event implements Runnable {
 
             // each event handles its own timing now
             while (slept < delayTime) {
+                // stop if greenhouse was terminated
+                if (greenhouse.isTerminated()) {
+                    return;
+                }
                 // waits here if greenhouse is suspended
                 greenhouse.waitIfSuspended();
 
@@ -36,7 +40,10 @@ public abstract class Event implements Runnable {
 
             // check suspend one more time before action
             greenhouse.waitIfSuspended();
-
+            // stop if greenhouse was terminated
+            if (greenhouse.isTerminated()) {
+                return;
+            }
             // output event description
             greenhouse.outputEvent(delayTime, this.toString());
 

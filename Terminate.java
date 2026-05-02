@@ -9,7 +9,8 @@ public class Terminate extends Event {
 
     @Override
     public void action() {
-        System.exit(0);
+        // terminate current greenhouse only, not the whole program
+        greenhouse.terminateEvents();
     }
 
     @Override

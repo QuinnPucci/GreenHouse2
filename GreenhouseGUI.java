@@ -307,8 +307,8 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
             showError("open an events file first");
             return;
         }
-
         outputArea.setText("");
+        greenhouse.clearTerminated();
         greenhouse.createEvent("Restart", 0, currentEventsFile.getPath());
         updateControls();
     }
@@ -321,6 +321,7 @@ public class GreenhouseGUI extends JFrame implements GreenhouseOutput {
         }
 
         outputArea.setText("");
+        greenhouse.clearTerminated();
         greenhouse.createEvent("Restart", 0, currentEventsFile.getPath());
         updateControls();
     }
